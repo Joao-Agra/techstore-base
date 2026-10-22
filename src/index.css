@@ -218,6 +218,7 @@ h2 {
 }
 
 .mini-carrinho {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--espaco-2);
@@ -230,6 +231,13 @@ h2 {
 
 .mini-carrinho:hover {
   border-color: var(--cor-texto);
+}
+
+.mini-carrinho-icone-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mini-carrinho-icone {
@@ -245,6 +253,24 @@ h2 {
 .mini-carrinho-icone circle {
   fill: currentColor;
   stroke: none;
+}
+
+.mini-carrinho-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--cor-destaque);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .mini-carrinho-texto {
@@ -434,6 +460,131 @@ h2 {
   color: var(--cor-frete);
 }
 
+.lista-vazia {
+  color: var(--cor-texto-suave);
+  font-size: 0.85rem;
+}
+
+.painel-lojista {
+  display: grid;
+  gap: var(--espaco-6);
+}
+
+.painel-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: var(--espaco-4);
+}
+
+.cards-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--espaco-4);
+}
+
+.card-metrica {
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  padding: var(--espaco-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+}
+
+.metrica-label {
+  color: var(--cor-texto-suave);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metrica-valor {
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+.painel-grid {
+  display: grid;
+  gap: var(--espaco-5);
+}
+
+@media (min-width: 1024px) {
+  .painel-grid {
+    grid-template-columns: 1.5fr 1fr;
+  }
+}
+
+.painel-bloco {
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  padding: var(--espaco-5);
+}
+
+.painel-bloco h2 {
+  margin-top: 0;
+}
+
+.tabela-painel th,
+.tabela-painel td {
+  white-space: nowrap;
+}
+
+.lista-painel {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--espaco-3);
+}
+
+.lista-painel li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-pequeno);
+  padding: var(--espaco-3);
+}
+
+.lista-painel li span {
+  color: var(--cor-texto-suave);
+  font-size: 0.8rem;
+}
+
+.lista-espera-estoque {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--espaco-2);
+  min-width: 180px;
+}
+
+.lista-espera-estoque li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-pequeno);
+  padding: var(--espaco-2);
+}
+
+.lista-espera-estoque li strong {
+  font-size: 0.85rem;
+}
+
+.lista-espera-estoque li span {
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave);
+}
+
 /* Botões */
 
 .botao {
@@ -571,6 +722,67 @@ h2 {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--cor-frete);
+}
+
+.detalhe-estoque-esgotado {
+  color: var(--cor-erro);
+}
+
+.alerta-esgotado {
+  background: var(--cor-erro-fundo);
+  border: 1px solid rgba(199, 89, 89, 0.25);
+  border-radius: var(--raio);
+  padding: var(--espaco-4);
+  display: grid;
+  gap: var(--espaco-3);
+}
+
+.mensagem-esgotado {
+  margin: 0;
+  color: var(--cor-erro);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.form-esgotado {
+  display: grid;
+  gap: var(--espaco-3);
+}
+
+.campo-form {
+  display: grid;
+  gap: var(--espaco-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.campo-form input {
+  width: 100%;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-pequeno);
+  background: var(--cor-superficie);
+  padding: var(--espaco-3);
+  font: inherit;
+}
+
+.mensagem-form {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.mensagem-sucesso {
+  color: var(--cor-frete);
+}
+
+.mensagem-erro {
+  color: var(--cor-erro);
+}
+
+.lista-espera-total {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
 }
 
 .detalhe-garantias {

@@ -1,5 +1,7 @@
+import { obterListaEsperaPorProduto } from '../utils/espera'
+
 // Página usada pelo time de estoque para acompanhar a quantidade de cada produto
-export default function Estoque({ produtos }) {
+export default function Estoque({ produtos, listaEspera }) {
   // slice cria uma cópia, para o sort não alterar a lista original
   const ordenados = produtos.slice().sort((a, b) => a.estoque - b.estoque)
 
@@ -17,23 +19,42 @@ export default function Estoque({ produtos }) {
               <th>Categoria</th>
               <th>Unidades</th>
               <th>Situação</th>
+              <th>Lista de espera</th>
             </tr>
           </thead>
           <tbody>
-            {ordenados.map((produto) => (
-              <tr key={produto.id}>
-                <td>{produto.title}</td>
-                <td>{produto.category}</td>
-                <td>{produto.estoque}</td>
-                <td>
-                  {produto.estoque === 0 && <span className="selo selo-esgotado">Esgotado</span>}
-                  {produto.estoque > 0 && produto.estoque < 5 && (
-                    <span className="selo selo-alerta">Repor</span>
-                  )}
-                  {produto.estoque >= 5 && <span className="selo selo-ok">OK</span>}
-                </td>
-              </tr>
-            ))}
+            {ordenados.map((produto) => {
+              const interessados = obterListaEsperaPorProduto(listaEspera, produto.id)
+
+              return (
+                <tr key={produto.id}>
+                  <td>{produto.title}</td>
+                  <td>{produto.category}</td>
+                  <td>{produto.estoque}</td>
+                  <td>
+                    {produto.estoque === 0 && <span className="selo selo-esgotado">Esgotado</span>}
+                    {produto.estoque > 0 && produto.estoque < 5 && (
+                      <span className="selo selo-alerta">Repor</span>
+                    )}
+                    {produto.estoque >= 5 && <span className="selo selo-ok">OK</span>}
+                  </td>
+                  <td>
+                    {interessados.length === 0 ? (
+                      <span className="lista-vazia">Nenhum</span>
+                    ) : (
+                      <ul className="lista-espera-estoque">
+                        {interessados.map((pedido) => (
+                          <li key={`${pedido.produtoId}-${pedido.email}`}>
+                            <strong>{pedido.nome}</strong>
+                            <span>{pedido.email}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

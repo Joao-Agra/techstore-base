@@ -7,8 +7,11 @@ import Loja from './pages/Loja'
 import PaginaProduto from './pages/PaginaProduto'
 import Carrinho from './pages/Carrinho'
 import Estoque from './pages/Estoque'
+import PainelLojista from './pages/PainelLojista'
 import { buscarProdutos } from './services/produtos'
 import { buscarClientes } from './services/clientes'
+import { produtoDisponivel, removerUmaUnidade } from './utils/carrinho'
+import { adicionarPedidoEspera } from './utils/espera'
 
 export default function App() {
   const [produtos, setProdutos] = useState([])
@@ -17,6 +20,22 @@ export default function App() {
   const [carrinho, setCarrinho] = useState([])
   const [clientes, setClientes] = useState([])
   const [clienteAtualId, setClienteAtualId] = useState(null)
+  const [listaEspera, setListaEspera] = useState(() => {
+    if (typeof window === 'undefined') return []
+
+    try {
+      const salvo = window.localStorage.getItem('techstore-lista-espera')
+      return salvo ? JSON.parse(salvo) : []
+    } catch {
+      return []
+    }
+  })
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('techstore-lista-espera', JSON.stringify(listaEspera))
+    }
+  }, [listaEspera])
 
   useEffect(() => {
     buscarProdutos()
@@ -31,21 +50,26 @@ export default function App() {
   }, [])
 
   function adicionarAoCarrinho(produto) {
-    setCarrinho(carrinho.concat(produto))
+    if (!produtoDisponivel(produto)) {
+      return
+    }
+
+    setCarrinho((atual) => atual.concat(produto))
   }
 
-  function removerUmaUnidade(produtoId) {
-    // Remove só a primeira unidade encontrada do produto
-    let removido = false
-    setCarrinho(
-      carrinho.filter((produto) => {
-        if (!removido && produto.id === produtoId) {
-          removido = true
-          return false
-        }
-        return true
-      })
-    )
+  function removerProdutoDoCarrinho(produtoId) {
+    setCarrinho((atual) => removerUmaUnidade(atual, produtoId))
+  }
+
+  function registrarListaEspera(produtoId, nome, email) {
+    const proximo = adicionarPedidoEspera(listaEspera, produtoId, nome, email)
+
+    if (proximo.length === listaEspera.length) {
+      return false
+    }
+
+    setListaEspera(proximo)
+    return true
   }
 
   const clienteAtual = clientes.find((cliente) => cliente.id === clienteAtualId)
@@ -67,7 +91,14 @@ export default function App() {
             />
             <Route
               path="/produto/:id"
-              element={<PaginaProduto produtos={produtos} onAdicionar={adicionarAoCarrinho} />}
+              element={
+                <PaginaProduto
+                  produtos={produtos}
+                  onAdicionar={adicionarAoCarrinho}
+                  onAdicionarListaEspera={registrarListaEspera}
+                  listaEspera={listaEspera}
+                />
+              }
             />
             <Route
               path="/carrinho"
@@ -77,11 +108,15 @@ export default function App() {
                   produtos={produtos}
                   clienteAtual={clienteAtual}
                   onAdicionar={adicionarAoCarrinho}
-                  onRemover={removerUmaUnidade}
+                  onRemover={removerProdutoDoCarrinho}
                 />
               }
             />
-            <Route path="/estoque" element={<Estoque produtos={produtos} />} />
+            <Route path="/estoque" element={<Estoque produtos={produtos} listaEspera={listaEspera} />} />
+            <Route
+              path="/painel-lojista"
+              element={<PainelLojista produtos={produtos} listaEspera={listaEspera} />}
+            />
           </Routes>
         )}
       </main>
